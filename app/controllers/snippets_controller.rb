@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class SnippetsController < ApplicationController
-  before_action :set_snippet, only: %i[:show, :edit, :update, :destroy]
+  before_action :set_snippet, only: %i[show edit update destroy]
 
   # GET /snippets
   # GET /snippets.json

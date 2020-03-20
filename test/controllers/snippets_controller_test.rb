@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 class SnippetsControllerTest < ActionDispatch::IntegrationTest
@@ -17,7 +19,11 @@ class SnippetsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create snippet" do
     assert_difference('Snippet.count') do
-      post snippets_url, params: { snippet: { contents: @snippet.contents, language: @snippet.language, title: @snippet.title } }
+      post snippets_url, params: {
+        snippet: {
+          contents: @snippet.contents, language: @snippet.language, title: @snippet.title
+        },
+      }
     end
 
     assert_redirected_to snippet_url(Snippet.last)
@@ -34,7 +40,11 @@ class SnippetsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update snippet" do
-    patch snippet_url(@snippet), params: { snippet: { contents: @snippet.contents, language: @snippet.language, title: @snippet.title } }
+    patch snippet_url(@snippet), params: {
+      snippet: {
+        contents: @snippet.contents, language: @snippet.language, title: @snippet.title
+      },
+    }
     assert_redirected_to snippet_url(@snippet)
   end
 
