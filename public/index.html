@@ -24,10 +24,9 @@
           <div style="margin: 10px;">
             <h2>Snippets Shortcut</h2>
             <v-select v-model="language" :items="languages" label="language" v-on:change="abstruct"></v-select>
-            <h2>Snippets Shortcut</h2>
             <ul>
-              <li v-for="snippet in snippetList"><span id='name' v-on:click=" goElem(snippet.id)">[{{snippet.language}}]
-                  {{ snippet.title}}</span></li>
+              <li v-for="snippet in snippetList"><span id='name' v-on:click=" goElem(snippet.id)">[{{ snippet.language }}]
+                  {{ snippet.contents }}</span></li>
             </ul>
           </div>
         </v-flex>
@@ -35,11 +34,12 @@
           <v-card style="margin-top:10px" v-for="snippet in snippetList">
             <v-card-title primary-title>
               <a v-bind:id='snippet.id'></a>
-              <h3 class="headline">{{snippet.title}}</h3>
+              <h3 class="headline">{{ snippet.title }}</h3>
             </v-card-title>
             <div style="margin: 10px 20px;">
               <textarea style="width: 100%; height: 300px; background-color: #efefef; padding: 3px;">hoge</textarea>
             </div>
+
             <v-card-actions>
               <v-btn flat color="orange" v-on:click="togglePutModal(snippet.id)">Update</v-btn>
               <v-btn flat color="gray" v-on:click="toggleDeleteModal(snippet.id)">Delete</v-btn>
@@ -140,9 +140,9 @@
         return {
           snippetList: ['', ''],
           allData: ['', ''],
-          languages: ['ALL'],
-          language: 'ALL',
-          languagesForEdit: [],
+          // languages: ['ALL'],
+          // language: 'ALL',
+          // languagesForEdit: [],
           dialogPostFlag: false,
           postTitle: '',
           postLanguage: '',
@@ -152,9 +152,9 @@
           putLanguage: '',
           putContents: '',
           dialogDeleteFlag: false,
-          deleteTitle: '',
-          deleteLanguage: '',
-          deleteContents: '',
+          // deleteTitle: '',
+          // deleteLanguage: '',
+          // deleteContents: '',
         }
       },
       mounted() {
@@ -163,27 +163,49 @@
       methods: {
         listSnippet: function () {
           axios.get('/snippets.json')
-            .then(function (response) {
+            .then(response => {
               this.allData = response.data
               this.snippetList = this.allData
-              this.listLanguages();
-              this.abstruct();
+        //       this.listLanguages();
+        //       this.abstruct();
             });
         },
-        listLanguages: function () {
-          this.language = []
-          this.languagesForEdit = []
-          this.languages.push('ALL')
-          for (i = 0; i < this.allData.length; i++) {
-            if (this.languages.indexOf(this.allData[i].language) == -1) {
-              this.languages.push(this.allData[i].language)
-              this.languagesForEdit.push(this.allData[i].language)
-            }
-          }
-        },
+        // listLanguages: function () {
+        //   this.language = []
+        //   this.languagesForEdit = []
+        //   this.languages.push('ALL')
+        //   for (i = 0; i < this.allData.length; i++) {
+        //     if (this.languages.indexOf(this.allData[i].language) == -1) {
+        //       this.languages.push(this.allData[i].language)
+        //       this.languagesForEdit.push(this.allData[i].language)
+        //     }
+        //   }
+        // },
         togglePostModal: function () {
           // this is a switch that you can turn on and off
           this.dialogPostFlag = !this.dialogPostFlag
+        },
+        togglePutModal: function (id) {
+          axios.get('/snippets/' + id + '.json')
+            .then(response => {
+              this.putTitle = response.data.title
+              this.putLanguage = response.data.language
+              this.putContents = response.data.contents
+            });
+          this.id = id
+          this.dialogPutFlag = !this.dialogPutFlag
+        },
+        putSnippet: function() {
+          axios.put('/snippets/' + this.id + '.json', {
+            title:this.putTitle,
+            language:this.putLanguage,
+            contents:this.putContents
+          })
+            .then(response => {
+              this.listSnippet();
+            }
+          );
+          this.dialogPutFlag = !this.dialogPutFlag
         },
         postSnippet: function () {
           axios.post('/snippets.json', {
@@ -198,27 +220,27 @@
               this.postContents = ''
             });
         },
-        togglePutModal: function (id) {
-          axios.get('/snippets/' + id + '.json')
-            .then(response => {
-              this.putTitle = response.data.title
-              this.putLanguage = response.data.language
-              this.putContents = response.data.contents
-            });
-          this.id = id
-          this.dialogPutFlag = !this.dialogPutFlag
-        },
-        putSnippet: function () {
-          axios.put('/snippets/' + this.id + 'json', {
-              title: this.putTitle,
-              language: this.putLanguage,
-              contents: this.putContents
-            })
-            .then(response => {
-              this.listSnippet();
-            });
-          this.dialogPutFlag = !this.dialogPutFlag
-        },
+        // togglePutModal: function (id) {
+        //   axios.get('/snippets/' + id + '.json')
+        //     .then(response => {
+        //       this.putTitle = response.data.title
+        //       this.putLanguage = response.data.language
+        //       this.putContents = response.data.contents
+        //     });
+        //   this.id = id
+        //   this.dialogPutFlag = !this.dialogPutFlag
+        // },
+        // putSnippet: function () {
+        //   axios.put('/snippets/' + this.id + 'json', {
+        //       title: this.putTitle,
+        //       language: this.putLanguage,
+        //       contents: this.putContents
+        //     })
+        //     .then(response => {
+        //       this.listSnippet();
+        //     });
+        //   this.dialogPutFlag = !this.dialogPutFlag
+        // },
         deleteSnippet: function () {
           axios.delete('/snippets/' + this.id + '.json')
             .then(response => {
@@ -236,19 +258,19 @@
         goTop: function () {
           document.getElementById("app").scrollIntoView(true)
         },
-        abstruct: function () {
-          if (this.language == 'ALL') {
-            this.snippetList = []
-            for (i = 0; i < this.allData.length; i++) {
-              this.snippetList.push(this.allData[i])
-            }
-          } else if (this.language != '') {
-            this.snippetList = []
-            for (this.allData[i].language == this.language) {
-              this.snippetList.push(this.allData[i])
-            }
-          }
-        },
+        // abstruct: function () {
+        //   if (this.language == 'ALL') {
+        //     this.snippetList = []
+        //     for (i = 0; i < this.allData.length; i++) {
+        //       this.snippetList.push(this.allData[i])
+        //     }
+        //   } else if (this.language != '') {
+        //     this.snippetList = []
+        //     for (this.allData[i].language == this.language) {
+        //       this.snippetList.push(this.allData[i])
+        //     }
+        //   }
+        // },
       }
     })
   </script>
