@@ -8,6 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vuetify@1.5/dist/vuetify.js"></script>
+  <script src="https://cdn.rawgit.com/showdownjs/showdown/1.9.0/dist/showdown.min.js"></script>
   <title>Snippet App</title>
 </head>
 
@@ -34,14 +35,14 @@
           <h2>Search Snippet</h2>
           <v-text-field v-model="searchWord" v-on:keyup="abstruct" label="Input Keyword" style='margin-top:4px'></v-text-field>
           <v-card style="margin-top:10px" v-for="snippet in snippetList">
-            <a v-bind:id='snippet.id'></a>
             <v-card-title primary-title>
               <div style="background-color:#FDF5E6">
+                <a v-bind:id='snippet.id'></a>
                 <h3 class="headline">{{ snippet.title }}</h3>
               </div>
             </v-card-title>
             <div style="margin: 10px 20px;">
-              <textarea style="width: 100%; height: 300px; background-color: #efefef; padding: 3px;">hoge</textarea>
+              <div v-html='showdown.makeHtml(snippet.contents)'></div>
             </div>
 
             <v-card-actions>
@@ -157,13 +158,12 @@
           putContents: '',
           dialogDeleteFlag: false,
           searchWord: ''
-          // deleteTitle: '',
-          // deleteLanguage: '',
-          // deleteContents: '',
         }
       },
       mounted() {
         this.listSnippet();
+        options = { headerLevelStart: 3, omitExtraWLInCodeBlocks: true, tables: true, simpleLineBreaks: true, simplifiedAutolink: true }
+        this.showdown = new showdown.Converter(options)
       },
       methods: {
         listSnippet: function () {
@@ -225,27 +225,6 @@
               this.postContents = ''
             });
         },
-        // togglePutModal: function (id) {
-        //   axios.get('/snippets/' + id + '.json')
-        //     .then(response => {
-        //       this.putTitle = response.data.title
-        //       this.putLanguage = response.data.language
-        //       this.putContents = response.data.contents
-        //     });
-        //   this.id = id
-        //   this.dialogPutFlag = !this.dialogPutFlag
-        // },
-        // putSnippet: function () {
-        //   axios.put('/snippets/' + this.id + 'json', {
-        //       title: this.putTitle,
-        //       language: this.putLanguage,
-        //       contents: this.putContents
-        //     })
-        //     .then(response => {
-        //       this.listSnippet();
-        //     });
-        //   this.dialogPutFlag = !this.dialogPutFlag
-        // },
         deleteSnippet: function () {
           axios.delete('/snippets/' + this.id + '.json')
             .then(response => {
