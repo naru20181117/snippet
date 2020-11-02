@@ -24,10 +24,9 @@
         <v-flex xs5>
           <div style="margin: 10px;">
             <h2>種類</h2>
-            <v-select v-model="language" :items="languages" label="language" v-on:change="abstruct"></v-select>
+            <v-select v-model="language" :items="languages" label="種類" v-on:change="abstruct"></v-select>
             <ul>
-              <li v-for="snippet in snippetList"><span id='name' v-on:click=" goElem(snippet.id)">[{{ snippet.language }}]
-                  {{ snippet.contents }}</span></li>
+              <li v-for="snippet in snippetList"><span id='name' v-on:click=" goElem(snippet.id)">[{{ snippet.language }}]</span></li>
             </ul>
           </div>
         </v-flex>
