@@ -41,7 +41,10 @@
               </div>
             </v-card-title>
             <div style="margin: 10px 20px;">
-              <div v-html='showdown.makeHtml(snippet.contents)'></div>
+              <!-- Avoiding error -->
+              <div v-if="snippet"
+                v-html='showdown.makeHtml(snippet.contents)'>
+              </div>
             </div>
 
             <v-card-actions>
