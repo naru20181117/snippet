@@ -24,7 +24,7 @@
         <v-flex xs5>
           <div style="margin: 10px;">
             <h2>種類</h2>
-            <v-select v-model="language" :items="languages" label="種類" v-on:change="abstruct"></v-select>
+            <v-select v-model="language" :items="languages" v-on:change="abstruct"></v-select>
             <ul>
               <li v-for="snippet in snippetList"><span id='name' v-on:click=" goElem(snippet.id)">[{{ snippet.language }}]</span></li>
             </ul>
@@ -175,7 +175,6 @@
             });
         },
         listLanguages: function () {
-          this.language = []
           this.languagesForEdit = []
           this.languages.push('ALL')
           for (i = 0; i < this.allData.length; i++) {
@@ -249,7 +248,7 @@
                 this.snippetList.push(this.allData[i])
               }
             }
-          } else if (this.language != '') {
+          } else if (this.language != 'ALL') {
             this.snippetList = []
             for (i=0;i<this.allData.length;i++) {
               if (this.allData[i].language == this.language) {
